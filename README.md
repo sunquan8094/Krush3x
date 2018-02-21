@@ -1,1 +1,2 @@
-Krush3x
+# Krush3x
+*Experimental Bitcrusher Plugin made with JUCE*
