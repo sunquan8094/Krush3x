@@ -22,9 +22,11 @@ Krush3xAudioProcessor::Krush3xAudioProcessor()
                       #endif
                        .withOutput ("Output", AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ), parameters(*this, nullptr)
 #endif
 {
+    parameters.createAndAddParameter("bitDepth", "Bit Depth", String(), NormalisableRange<float>(2.0f, 24.0f, 1.0f), 24, nullptr, nullptr);
+    parameters.state = ValueTree(Identifier("Krush3x"));
 }
 
 Krush3xAudioProcessor::~Krush3xAudioProcessor()
@@ -144,6 +146,8 @@ void Krush3xAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
+    bitDepthParam = parameters.getRawParameterValue("bitDepth");
+  
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't
     // guaranteed to be empty - they may contain garbage).
@@ -159,20 +163,19 @@ void Krush3xAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer
     // the samples and the outer loop is handling the channels.
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
-    float sum = 0, avg = 0;
+
     for (int channel = 0; channel < totalNumInputChannels; ++channel) {
+      float sum = 0, avg = 0;
       float* channelData = buffer.getWritePointer (channel);
       for (int i = 0; i < buffer.getNumSamples(); i++) {
-          float twoPowerLessOne = exp2(bitDepth) - 1, rawNum = floor(channelData[i] * twoPowerLessOne);
+          float twoPowerLessOne = exp2(*bitDepthParam) - 1.0f, rawNum = floor(channelData[i] * twoPowerLessOne);
           channelData[i] = (float)(rawNum / twoPowerLessOne);
           sum += channelData[i];
-      }  
+      }
       avg = sum / buffer.getNumSamples();
       for (int i = 0; i < buffer.getNumSamples(); i++) {
         channelData[i] -= avg;
       }
-      sum = 0;
-      avg = 0;
     }
 }
 
@@ -184,7 +187,7 @@ bool Krush3xAudioProcessor::hasEditor() const
 
 AudioProcessorEditor* Krush3xAudioProcessor::createEditor()
 {
-    return new Krush3xAudioProcessorEditor (*this);
+    return new Krush3xAudioProcessorEditor (*this, parameters);
 }
 
 //==============================================================================

@@ -13,14 +13,13 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
 
-
 //==============================================================================
 /**
 */
 class Krush3xAudioProcessorEditor  : public AudioProcessorEditor, private Slider::Listener
 {
 public:
-    Krush3xAudioProcessorEditor (Krush3xAudioProcessor&);
+    Krush3xAudioProcessorEditor (Krush3xAudioProcessor&, AudioProcessorValueTreeState&);
     ~Krush3xAudioProcessorEditor();
 
     //==============================================================================
@@ -34,8 +33,11 @@ private:
     // access the processor object that created it.
     Krush3xAudioProcessor& processor;
   
+    AudioProcessorValueTreeState& valueTreeState;
+  
     Slider bitDepthController;
     Label bitDepthLabel;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> bitDepthAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Krush3xAudioProcessorEditor)
 };

@@ -12,20 +12,19 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-Krush3xAudioProcessorEditor::Krush3xAudioProcessorEditor (Krush3xAudioProcessor& p)
-    : AudioProcessorEditor (&p), processor (p)
+Krush3xAudioProcessorEditor::Krush3xAudioProcessorEditor (Krush3xAudioProcessor& p, AudioProcessorValueTreeState &vts)
+    : AudioProcessorEditor (&p), processor (p), valueTreeState(vts)
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
     setSize (400, 300);
-    
+
     bitDepthController.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-    bitDepthController.setRange(2, 24, 1);
-    bitDepthController.setValue(24);
+    bitDepthAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(valueTreeState, "bitDepth", bitDepthController));
     bitDepthController.setTextValueSuffix("Bits");
     addAndMakeVisible(bitDepthController);
     bitDepthController.addListener(this);
-  
+
     addAndMakeVisible(&bitDepthLabel);
     bitDepthLabel.setText("Bit Depth", dontSendNotification);
     bitDepthLabel.attachToComponent(&bitDepthController, true);
@@ -42,15 +41,13 @@ void Krush3xAudioProcessorEditor::paint (Graphics& g)
     g.fillAll (Colours::white);
     g.setColour(Colours::black);
     g.setFont(18.0f);
-  
-    //g.drawFittedText ("Hello World!", getLocalBounds(), Justification::centred, 1);
 }
 
 void Krush3xAudioProcessorEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
-      
+
     bitDepthController.setBounds(50, 50, 300, 75);
 }
 

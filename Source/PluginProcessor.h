@@ -63,4 +63,7 @@ private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Krush3xAudioProcessor)
     float rms(float* array, int length); 
+    AudioProcessorValueTreeState parameters;
+  
+    float* bitDepthParam = nullptr;
 };
