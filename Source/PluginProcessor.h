@@ -19,9 +19,6 @@
 class Krush3xAudioProcessor  : public AudioProcessor
 {
 public:
-    int bitDepth;
-    int floorCeil;
-    bool playing;
     //==============================================================================
     Krush3xAudioProcessor();
     ~Krush3xAudioProcessor();
@@ -62,8 +59,9 @@ public:
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Krush3xAudioProcessor)
-    float rms(float* array, int length); 
     AudioProcessorValueTreeState parameters;
   
     float* bitDepthParam = nullptr;
+    float* freqReductionParam = nullptr;
+    float phase, lastValue;
 };

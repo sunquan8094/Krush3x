@@ -16,7 +16,7 @@
 //==============================================================================
 /**
 */
-class Krush3xAudioProcessorEditor  : public AudioProcessorEditor, private Slider::Listener
+class Krush3xAudioProcessorEditor  : public AudioProcessorEditor
 {
 public:
     Krush3xAudioProcessorEditor (Krush3xAudioProcessor&, AudioProcessorValueTreeState&);
@@ -27,7 +27,6 @@ public:
     void resized() override;
 
 private:
-    void sliderValueChanged(Slider* slider) override;
   
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
@@ -38,6 +37,10 @@ private:
     Slider bitDepthController;
     Label bitDepthLabel;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> bitDepthAttachment;
+  
+    Slider freqReductionController;
+    Label freqReductionLabel;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> freqReductionAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Krush3xAudioProcessorEditor)
 };

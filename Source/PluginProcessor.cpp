@@ -25,8 +25,15 @@ Krush3xAudioProcessor::Krush3xAudioProcessor()
                        ), parameters(*this, nullptr)
 #endif
 {
-    parameters.createAndAddParameter("bitDepth", "Bit Depth", String(), NormalisableRange<float>(2.0f, 24.0f, 1.0f), 24, nullptr, nullptr);
+    phase = 0.0f;
+    lastValue = 0.5f;
+    parameters.createAndAddParameter("bitDepth", "Bit Depth", String(), NormalisableRange<float>(2.0f, 24.0f, 1.0f), 24.0f, nullptr, nullptr);
+    parameters.createAndAddParameter("freqReduction", "Frequency Reduction", String(), NormalisableRange<float>(0.1f, 1.0f, 0.1f), 1, nullptr, nullptr);
     parameters.state = ValueTree(Identifier("Krush3x"));
+  
+  
+    bitDepthParam = parameters.getRawParameterValue("bitDepth");
+    freqReductionParam = parameters.getRawParameterValue("freqReduction");
 }
 
 Krush3xAudioProcessor::~Krush3xAudioProcessor()
@@ -132,21 +139,11 @@ bool Krush3xAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) 
 }
 #endif
 
-float Krush3xAudioProcessor::rms(float* array, int length) {
-  float sum = 0.0f;
-  for (int i = 0; i < length; i++) {
-    sum += array[i] * array[i];
-  }
-  return sqrt((1/length) * (sum));
-}
-
 void Krush3xAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
     ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
-
-    bitDepthParam = parameters.getRawParameterValue("bitDepth");
   
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't
@@ -169,8 +166,13 @@ void Krush3xAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer
       float* channelData = buffer.getWritePointer (channel);
       for (int i = 0; i < buffer.getNumSamples(); i++) {
           float twoPowerLessOne = exp2(*bitDepthParam) - 1.0f, rawNum = floor(channelData[i] * twoPowerLessOne);
-          channelData[i] = (float)(rawNum / twoPowerLessOne);
-          sum += channelData[i];
+          phase += (*freqReductionParam);
+          if (phase >= 1.0f) {
+            phase -= 1.0f;
+            lastValue = (float)(rawNum / twoPowerLessOne);
+          }
+          channelData[i] = lastValue;
+          sum += lastValue;
       }
       avg = sum / buffer.getNumSamples();
       for (int i = 0; i < buffer.getNumSamples(); i++) {
