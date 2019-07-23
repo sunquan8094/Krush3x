@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT name="Krush3x" projectType="audioplug" jucerVersion="5.3.1" version="0.1.0"
+<JUCERPROJECT name="Krush3x" projectType="audioplug" jucerVersion="5.4.3" version="0.2.0"
               companyName="sunquan8094" companyEmail="sunquan8094@gmail.com"
               bundleIdentifier="com.sunquan8094.Krush3x" companyWebsite="https://github.com/sunquan8094"
               pluginManufacturerCode="SQen" pluginManufacturer="sunquan8094"
               pluginName="Krush3x" buildVST3="1" buildAUv3="1" buildVST="1"
               buildRTAS="0" buildAAX="0" pluginDesc="Experimental bitcrusher plugin"
               buildAU="1" pluginAUMainType="'aufx'" pluginFormats="buildVST,buildVST3,buildAU,buildAUv3"
-              pluginVST3Category="Distortion" buildStandalone="0" enableIAA="0">
+              pluginVST3Category="Distortion" buildStandalone="0" enableIAA="0"
+              id="iycgZg">
   <MAINGROUP id="neIaro" name="Krush3x">
     <GROUP id="{B18682F7-B182-CE07-D0E4-A1C224AB1DE0}" name="Source">
       <FILE id="i1Iiys" name="PluginProcessor.cpp" compile="1" resource="0"
