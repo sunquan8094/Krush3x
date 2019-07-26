@@ -123,8 +123,8 @@ void Krush3xAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer
     for (int channel = 0; channel < totalNumInputChannels; ++channel) {
       float* channelData = buffer.getWritePointer (channel), bitDepthValue = (float)*parameters->getRawParameterValue(StringRef("bitDepth")), dryWetVal = (float)*parameters->getRawParameterValue(StringRef("dryWet"));
       for (int i = 0; i < buffer.getNumSamples(); i++) {
-        float twoPower = exp2(bitDepthValue) - 1.0f,
-        rawNum = floor(channelData[i] * twoPower) / twoPower,
+        float twoPower = exp2(bitDepthValue) - 1,
+        rawNum = round((channelData[i] + 1) / 2 * twoPower) / twoPower * 2 - 1,
         wetSig = rawNum * dryWetVal, drySig = channelData[i] * (1.0f - dryWetVal);
           phase += (float)*parameters->getRawParameterValue(StringRef("freqReduction"));
           if (phase >= 1.0f) {
